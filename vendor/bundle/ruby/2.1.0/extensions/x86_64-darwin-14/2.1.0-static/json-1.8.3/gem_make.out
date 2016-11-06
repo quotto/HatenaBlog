@@ -1,0 +1,14 @@
+current directory: /Volumes/share/rails_work/hatebu/vendor/bundle/ruby/2.1.0/gems/json-1.8.3/ext/json
+/Users/yamada/.rbenv/versions/2.1.2/bin/ruby -r ./siteconf20161104-22251-u6lsm6.rb extconf.rb
+creating Makefile
+
+current directory: /Volumes/share/rails_work/hatebu/vendor/bundle/ruby/2.1.0/gems/json-1.8.3/ext/json
+make "DESTDIR=" clean
+
+current directory: /Volumes/share/rails_work/hatebu/vendor/bundle/ruby/2.1.0/gems/json-1.8.3/ext/json
+make "DESTDIR="
+make: Nothing to be done for `all'.
+
+current directory: /Volumes/share/rails_work/hatebu/vendor/bundle/ruby/2.1.0/gems/json-1.8.3/ext/json
+make "DESTDIR=" install
+installing default libraries

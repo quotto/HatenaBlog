@@ -1,0 +1,37 @@
+// Place all the styles related to the HatenaBlog controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+$fontsize_title:120%;
+$fontsize_article:85%;
+$fontsize_footer:$fontsize_article;
+$bordercolor:#dddddd;
+$fontcolor_title:#3d3f44;
+$fontcolor_article:#777;
+$fontcolor_footer:$fontcolor_article;
+
+.hatena-newentrylist {
+  border-bottom:1px solid $bordercolor;
+  .hatena-newentry-title {
+    a {
+      font-size:$fontsize_title;
+      color:$fontcolor_title;
+    }
+    a:hover {
+      border-bottom:1px solid $fontcolor_title;
+    }
+  }
+  .hatena-newentry-article {
+    padding-bottom:5px;
+    padding-top:5px;
+    font-size:$fontsize_article;
+    color:$fontcolor_article;
+  } 
+  .hatena-newentry-footer {
+    font-size:$fontsize_footer;
+    color:$fontcolor_article;
+    a:hover {
+      border-bottom:1px solid;
+    }
+  }
+}

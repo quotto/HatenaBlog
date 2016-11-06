@@ -1,0 +1,17 @@
+.hatena-newentrylist {
+  border-bottom: 1px solid #dddddd; }
+  .hatena-newentrylist .hatena-newentry-title a {
+    font-size: 120%;
+    color: #3d3f44; }
+  .hatena-newentrylist .hatena-newentry-title a:hover {
+    border-bottom: 1px solid #3d3f44; }
+  .hatena-newentrylist .hatena-newentry-article {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    font-size: 85%;
+    color: #777; }
+  .hatena-newentrylist .hatena-newentry-footer {
+    font-size: 85%;
+    color: #777; }
+    .hatena-newentrylist .hatena-newentry-footer a:hover {
+      border-bottom: 1px solid; }

@@ -1,0 +1,2 @@
+module HatenaBlogHelper
+end
