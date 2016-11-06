@@ -53,16 +53,6 @@ namespace :deploy do
   end
   after :starting, :clear_assets
 
-  desc 'Set js,css file'
-  task :place_assets do
-    on roles(:app), in: :sequence, wait: 5 do
-      execute :mkdir,"-p #{fetch :deploy_to}/current/public/assets"
-      execute :cp, "#{fetch :deploy_to}/current/app/assets/stylesheets/*.min.css", "#{fetch :deploy_to}/current//public/assets"
-      execute :cp, "#{fetch :deploy_to}/current/app/assets/javascripts/*.min.js", "#{fetch :deploy_to}/current/public/assets"
-    end
-  end
-  after :restart, :place_assets
-
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
