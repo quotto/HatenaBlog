@@ -3,7 +3,7 @@
 # Defines a single server with a list of roles and multiple properties.
 # You can define all roles on a single server, or split them:
 
-server 'hatenablog.wackwack.net', user: 'yamada', roles: %w{app db web}, my_property: :my_value
+# server 'hatenablog.wackwack.net', user: 'yamada', roles: %w{app db web}, my_property: :my_value
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 
@@ -17,9 +17,9 @@ server 'hatenablog.wackwack.net', user: 'yamada', roles: %w{app db web}, my_prop
 # property set. Specify the username and a domain or IP for the server.
 # Don't use `:all`, it's a meta role.
 
-role :app, %w{yamada@wackwack.net}, my_property: :my_value
-role :web, %w{yamada@wackwack.net}, other_property: :other_value
-role :db,  %w{yamada@wackwack.net}
+role :app, %w{yamada@hatenablog.wackwack.net}, my_property: :my_value
+# role :web, %w{yamada@hatenablog.wackwack.net}, other_property: :other_value
+# role :db,  %w{yamada@hatenablog.wackwack.net}
 
 
 
@@ -41,21 +41,21 @@ role :db,  %w{yamada@wackwack.net}
 #
 # Global options
 # --------------
-#  set :ssh_options, {
-#    keys: %w(/home/rlisowski/.ssh/id_rsa),
-#    forward_agent: false,
-#    auth_methods: %w(password)
-#  }
+ set :ssh_options, {
+   keys: %w(~/.ssh/wackwack_id_rsa),
+   forward_agent: true,
+   auth_methods: %w(publickey)
+ }
 #
 # The server-based syntax can be used to override options:
 # ------------------------------------
-# server 'hatena.com',
-#   user: 'user_name',
+# server 'hatena.wackwack.net',
+#   user: 'yamada',
 #   roles: %w{web app},
 #   ssh_options: {
-#     user: 'user_name', # overrides user setting above
-#     keys: %w(/home/user_name/.ssh/id_rsa),
-#     forward_agent: false,
-#     auth_methods: %w(publickey password)
+#     user: 'yamada', # overrides user setting above
+#     keys: %w(~/.ssh/id_rsa),
+#     forward_agent: true,
+#     auth_methods: %w(publickey)
 #     # password: 'please use keys'
 #   }
