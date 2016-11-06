@@ -20,7 +20,7 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'app/assets/stylesheets',
           src: ['**/*.css'],
-          dest: 'app/assets/stylesheets',
+          dest: 'public/assets',
           ext: '.min.css'
         }]
       }
@@ -31,7 +31,7 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'app/assets/javascripts',
           src: ['**/*.js'],
-          dest: 'app/assets/javascripts',
+          dest: 'public/assets',
           ext: '.min.js'
         }]
       }

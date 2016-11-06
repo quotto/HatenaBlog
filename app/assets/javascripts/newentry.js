@@ -1,4 +1,4 @@
-var newentry_url="http://localhost:3000/hatena_blog/newentry";
+var newentry_url="http://hatenablog.wackwack.net/hatena_blog/newentry";
 $.ajax({
   type:"GET",
   url:newentry_url,
@@ -13,7 +13,7 @@ $.ajax({
       $li_hatena_newentrylist=$('<li class="hatena-newentrylist"></li>');
       $div_title=$('<div class="hatena-newentry-title"><a href="'+entries[c].href+'">'+entries[c].title+"</a></div>");
       $div_article=$('<div class="hatena-newentry-article">'+entries[c].article+"</div>");
-      $div_footer=$('<div class="hatena-newentry-footer"><a href="'+entries[c].href+'">'+entries[c].user+"</a> - <span>26分前</span></div>");
+      $div_footer=$('<div class="hatena-newentry-footer"><a href="'+entries[c].href+'">'+entries[c].user+'</a> - <span>' + entries[c].time + '</span></div>');
       $li_hatena_newentrylist.append($div_title);
       $li_hatena_newentrylist.append($div_article);
       $li_hatena_newentrylist.append($div_footer);
