@@ -30,7 +30,6 @@ Rails.application.routes.draw do
       get 'newentry'
       get 'irasutoya_search'
       post 'irasutoya_search'
-      get 'irasutoya_upload'
       post 'irasutoya_upload'
     end
   end
