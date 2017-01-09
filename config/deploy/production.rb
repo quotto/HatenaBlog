@@ -42,7 +42,7 @@ role :app, %w{yamada@hatenablog.wackwack.net}, my_property: :my_value
 # Global options
 # --------------
  set :ssh_options, {
-   keys: %w(~/.ssh/wackwack_id_rsa),
+   keys: %w(~/.ssh/github_rsa),
    forward_agent: true,
    auth_methods: %w(publickey)
  }
