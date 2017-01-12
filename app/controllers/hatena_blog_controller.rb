@@ -102,12 +102,13 @@ class HatenaBlogController < ApplicationController
     end
 
     user_name = params[:id]
-    api_key = params[:api_key]
-    base64nonce = SecureRandom.base64(64)
-    timestamp = Time.now.utc.iso8601
-    password_digest = Base64.encode64(Digest::SHA1.digest(Base64.decode64(base64nonce) + timestamp + api_key)).chomp!
+    password_digest = params[:digest]
+    base64nonce = params[:nonce]
+    timestamp = params[:timestamp]
 
     wsse = "UsernameToken Username=\"#{user_name}\",PasswordDigest=\"#{password_digest}\",Nonce=\"#{base64nonce}\",Created=\"#{timestamp}\""
+
+    puts wsse
 
     header = {'X-WSSE' =>  wsse,'Accept' => 'application/x.atom+xml, application/xml, text/xml, */*'}
     entry = <<-"ENTRY"
@@ -136,6 +137,8 @@ class HatenaBlogController < ApplicationController
     else 
       response_text = '{"message": "' + response.msg + '"}';
     end
+
+    puts response.body
 
     render :json => response_text,:status=>response.code
   end
