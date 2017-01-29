@@ -28,9 +28,7 @@ Rails.application.routes.draw do
   resources :hatena_blog do
     collection do
       get 'newentry'
-      get 'irasutoya_search'
-      post 'irasutoya_search'
-      post 'irasutoya_upload'
+      post 'fotolife_upload'
     end
   end
 
