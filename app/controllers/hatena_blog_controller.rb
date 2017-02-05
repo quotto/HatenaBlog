@@ -3,6 +3,11 @@ require 'open-uri'
 require 'capybara/poltergeist'
 class HatenaBlogController < ApplicationController
   protect_from_forgery :except => [:fotolife_upload] 
+  def index
+    respond_to do |format|
+      format.html # index.html.erb
+    end
+  end
   def newentry
     url = "http://blog.hatena.ne.jp/-/recent"
     purl = URI.parse(url)
