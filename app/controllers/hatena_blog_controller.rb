@@ -45,7 +45,7 @@ class HatenaBlogController < ApplicationController
     folder_name = params[:folder]
     scale = params[:scale].to_i
 
-    if scale >= 10 && scale <= 90 then
+    if scale >= 10 && scale <= 200 then
        factor = scale * 0.01
        magick = Magick::Image.from_blob(Base64.decode64(image_data))
        magick[0].scale!(factor)
