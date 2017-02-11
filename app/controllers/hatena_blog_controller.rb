@@ -1,6 +1,6 @@
 #coding:utf-8
 require 'open-uri'
-require 'capybara/poltergeist'
+require 'RMagick'
 class HatenaBlogController < ApplicationController
   protect_from_forgery :except => [:fotolife_upload] 
   def newentry
@@ -38,6 +38,15 @@ class HatenaBlogController < ApplicationController
     descriptor = params[:descriptor]
     image_data = params[:imagedata]
     folder_name = params[:folder]
+    scale = params[:scale].to_i
+
+    if scale >= 10 && scale <= 90 then
+       factor = scale * 0.01
+       magick = Magick::Image.from_blob(Base64.decode64(image_data))
+       magick[0].scale!(factor)
+       image_data = Base64.encode64(magick[0].to_blob)
+       magick[0].destroy!
+    end
 
     wsse = "UsernameToken Username=\"#{user_name}\",PasswordDigest=\"#{password_digest}\",Nonce=\"#{base64nonce}\",Created=\"#{timestamp}\""
 
@@ -50,8 +59,6 @@ class HatenaBlogController < ApplicationController
       #{(!folder_name.nil? and folder_name.length > 0) ? "<dc:subject>#{folder_name}</dc:subject>" : ""}
     </entry>
     ENTRY
-
-    puts entry
 
     client = Net::HTTP.new('f.hatena.ne.jp',80)
     response = client.post('/atom/post',entry,header)
@@ -69,8 +76,6 @@ class HatenaBlogController < ApplicationController
     else 
       response_text = '{"message": "' + response.msg + '"}';
     end
-
-    puts response.body
 
     render :json => response_text,:status=>response.code
   end
