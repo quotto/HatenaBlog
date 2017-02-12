@@ -3,6 +3,10 @@ require 'open-uri'
 require 'RMagick'
 class HatenaBlogController < ApplicationController
   protect_from_forgery :except => [:fotolife_upload] 
+  @@percent_min = 10
+  @@percent_max = 200
+  @@direct_min = 10
+  @@direct_max = 4000
   def index
     respond_to do |format|
       format.html # index.html.erb
@@ -43,18 +47,34 @@ class HatenaBlogController < ApplicationController
     descriptor = params[:descriptor]
     image_data = params[:imagedata]
     folder_name = params[:folder]
-    scale = params[:scale].to_i
+    type = params[:type]
 
-    if scale >= 10 && scale <= 200 then
-       factor = scale * 0.01
-       magick = Magick::Image.from_blob(Base64.decode64(image_data))
-       magick[0].scale!(factor)
-       image_data = Base64.encode64(magick[0].to_blob)
-       magick[0].destroy!
+    magick = Magick::Image.from_blob(Base64.decode64(image_data))
+    if descriptor === "bmp" then
+      magick[0].format = "jpeg"
+      descriptor = "jpeg"
     end
+
+    case type
+    when "percent" then
+      percent = params[:percent].to_i
+      if percent >= @@percent_min && percent <= @@percent_max then
+        factor = percent * 0.01
+        magick[0].scale!(factor)
+      end
+    when "direct" then
+      uwidth = params[:uwidth].to_i
+      uheight = params[:uheight].to_i
+      if (uwidth >= @@direct_min && uwidth <= @@direct_max) && (uheight >= @@direct_min && uheight <= @@direct_max) then
+        magick[0].scale!(uwidth,uheight)
+      end
+    end
+    image_data = Base64.encode64(magick[0].to_blob)
+    magick[0].destroy!
 
     wsse = "UsernameToken Username=\"#{user_name}\",PasswordDigest=\"#{password_digest}\",Nonce=\"#{base64nonce}\",Created=\"#{timestamp}\""
 
+    
     header = {'X-WSSE' =>  wsse,'Accept' => 'application/x.atom+xml, application/xml, text/xml, */*'}
     entry = <<-"ENTRY"
     <entry xmlns="http://purl.org/atom/ns#">
@@ -69,7 +89,6 @@ class HatenaBlogController < ApplicationController
     response = client.post('/atom/post',entry,header)
 
     response_text = nil
-    puts response.code
     case response.code
     when '201' then
       response_xml = Nokogiri::XML(response.body)
