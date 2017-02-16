@@ -44,16 +44,13 @@ class HatenaBlogController < ApplicationController
     password_digest = params[:digest]
     base64nonce = params[:nonce]
     timestamp = params[:timestamp]
-    descriptor = params[:descriptor]
     image_data = params[:imagedata]
     folder_name = params[:folder]
     type = params[:type]
+    format = params[:format]
 
     magick = Magick::Image.from_blob(Base64.decode64(image_data))
-    if descriptor === "bmp" then
-      magick[0].format = "jpeg"
-      descriptor = "jpeg"
-    end
+    magick[0].format = format
 
     case type
     when "percent" then
@@ -78,7 +75,7 @@ class HatenaBlogController < ApplicationController
     header = {'X-WSSE' =>  wsse,'Accept' => 'application/x.atom+xml, application/xml, text/xml, */*'}
     entry = <<-"ENTRY"
     <entry xmlns="http://purl.org/atom/ns#">
-      <content mode="base64" type="image/#{descriptor}">
+      <content mode="base64" type="image/#{format}">
         #{image_data}
       </content>
       #{(!folder_name.nil? and folder_name.length > 0) ? "<dc:subject>#{folder_name}</dc:subject>" : ""}
