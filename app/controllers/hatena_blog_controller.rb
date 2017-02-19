@@ -3,9 +3,10 @@ require 'open-uri'
 require 'RMagick'
 class HatenaBlogController < ApplicationController
   protect_from_forgery :except => [:fotolife_upload] 
-  @@percent_min = 10
-  @@percent_max = 200
-  @@direct_min = 10
+  @@percent_min = 0
+  @@percent_max = 100
+  # クライアント側では最小値0で入力可能だがサーバー側ではいずれかの値が0の場合にはリサイズしない
+  @@direct_min = 1
   @@direct_max = 4000
   def index
     respond_to do |format|
@@ -47,26 +48,28 @@ class HatenaBlogController < ApplicationController
     image_data = params[:imagedata]
     folder_name = params[:folder]
     type = params[:type]
-    format = params[:format]
+    compress_percent = params[:compress_percent]
+    format = params[:format].to_i
 
     magick = Magick::Image.from_blob(Base64.decode64(image_data))
     magick[0].format = format
 
     case type
-    when "percent" then
-      percent = params[:percent].to_i
-      if percent >= @@percent_min && percent <= @@percent_max then
-        factor = percent * 0.01
-        magick[0].scale!(factor)
-      end
-    when "direct" then
+    when "custom" then
       uwidth = params[:uwidth].to_i
       uheight = params[:uheight].to_i
       if (uwidth >= @@direct_min && uwidth <= @@direct_max) && (uheight >= @@direct_min && uheight <= @@direct_max) then
-        magick[0].scale!(uwidth,uheight)
+        magick[0].resize!(uwidth,uheight)
       end
     end
-    image_data = Base64.encode64(magick[0].to_blob)
+
+    compress_percent = 100 - compress_percent
+    if format != "jpeg" && (compress_percent >= @@percent_min && compress_percent <= @@percent_max)  then
+      compress_percent = 100
+    end
+    puts "compress:#{compress_percent}"
+
+    image_data = Base64.encode64(magick[0].to_blob{self.quality = compress_percent})
     magick[0].destroy!
 
     wsse = "UsernameToken Username=\"#{user_name}\",PasswordDigest=\"#{password_digest}\",Nonce=\"#{base64nonce}\",Created=\"#{timestamp}\""
