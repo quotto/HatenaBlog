@@ -3,8 +3,8 @@ require 'open-uri'
 require 'RMagick'
 class HatenaBlogController < ApplicationController
   protect_from_forgery :except => [:fotolife_upload] 
-  @@percent_min = 0
-  @@percent_max = 100
+  @@quality_min = 0
+  @@quality_max = 100
   # クライアント側では最小値0で入力可能だがサーバー側ではいずれかの値が0の場合にはリサイズしない
   @@direct_min = 1
   @@direct_max = 4000
@@ -47,30 +47,27 @@ class HatenaBlogController < ApplicationController
     timestamp = params[:timestamp]
     image_data = params[:imagedata]
     folder_name = params[:folder]
-    type = params[:type]
-    compress_percent = params[:compress_percent]
-    format = params[:format].to_i
+    uwidth = params[:uwidth].to_i
+    uheight = params[:uheight].to_i
+    quality = params[:quality].to_i
+    format = params[:format]
+
 
     magick = Magick::Image.from_blob(Base64.decode64(image_data))
     magick[0].format = format
 
-    case type
-    when "custom" then
-      uwidth = params[:uwidth].to_i
-      uheight = params[:uheight].to_i
-      if (uwidth >= @@direct_min && uwidth <= @@direct_max) && (uheight >= @@direct_min && uheight <= @@direct_max) then
-        magick[0].resize!(uwidth,uheight)
-      end
+    if (uwidth >= @@direct_min && uwidth <= @@direct_max) && (uheight >= @@direct_min && uheight <= @@direct_max) then
+      magick[0].resize!(uwidth,uheight)
     end
 
-    compress_percent = 100 - compress_percent
-    if format != "jpeg" && (compress_percent >= @@percent_min && compress_percent <= @@percent_max)  then
-      compress_percent = 100
+    if format != "jpeg" && (quality >= @@quality_min && quality <= @@quality_max)  then
+      quality = 100
     end
-    puts "compress:#{compress_percent}"
 
-    image_data = Base64.encode64(magick[0].to_blob{self.quality = compress_percent})
+    custom_magick = Magick::Image.from_blob(magick[0].to_blob{self.quality=quality})
+    image_data = Base64.encode64(custom_magick[0].to_blob)
     magick[0].destroy!
+    custom_magick[0].destroy!
 
     wsse = "UsernameToken Username=\"#{user_name}\",PasswordDigest=\"#{password_digest}\",Nonce=\"#{base64nonce}\",Created=\"#{timestamp}\""
 
