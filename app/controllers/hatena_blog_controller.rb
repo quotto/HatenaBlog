@@ -3,9 +3,10 @@ require 'open-uri'
 require 'RMagick'
 class HatenaBlogController < ApplicationController
   protect_from_forgery :except => [:fotolife_upload] 
-  @@percent_min = 10
-  @@percent_max = 200
-  @@direct_min = 10
+  @@quality_min = 0
+  @@quality_max = 100
+  # クライアント側では最小値0で入力可能だがサーバー側ではいずれかの値が0の場合にはリサイズしない
+  @@direct_min = 1
   @@direct_max = 4000
   def index
     respond_to do |format|
@@ -46,28 +47,27 @@ class HatenaBlogController < ApplicationController
     timestamp = params[:timestamp]
     image_data = params[:imagedata]
     folder_name = params[:folder]
-    type = params[:type]
+    uwidth = params[:uwidth].to_i
+    uheight = params[:uheight].to_i
+    quality = params[:quality].to_i
     format = params[:format]
+
 
     magick = Magick::Image.from_blob(Base64.decode64(image_data))
     magick[0].format = format
 
-    case type
-    when "percent" then
-      percent = params[:percent].to_i
-      if percent >= @@percent_min && percent <= @@percent_max then
-        factor = percent * 0.01
-        magick[0].scale!(factor)
-      end
-    when "direct" then
-      uwidth = params[:uwidth].to_i
-      uheight = params[:uheight].to_i
-      if (uwidth >= @@direct_min && uwidth <= @@direct_max) && (uheight >= @@direct_min && uheight <= @@direct_max) then
-        magick[0].scale!(uwidth,uheight)
-      end
+    if (uwidth >= @@direct_min && uwidth <= @@direct_max) && (uheight >= @@direct_min && uheight <= @@direct_max) then
+      magick[0].resize!(uwidth,uheight)
     end
-    image_data = Base64.encode64(magick[0].to_blob)
+
+    if format != "jpeg" && (quality >= @@quality_min && quality <= @@quality_max)  then
+      quality = 100
+    end
+
+    custom_magick = Magick::Image.from_blob(magick[0].to_blob{self.quality=quality})
+    image_data = Base64.encode64(custom_magick[0].to_blob)
     magick[0].destroy!
+    custom_magick[0].destroy!
 
     wsse = "UsernameToken Username=\"#{user_name}\",PasswordDigest=\"#{password_digest}\",Nonce=\"#{base64nonce}\",Created=\"#{timestamp}\""
 
